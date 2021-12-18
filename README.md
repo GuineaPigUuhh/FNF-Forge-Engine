@@ -70,7 +70,7 @@ The Contributors
 
 > Friday-Night-Funkin-Mp4-Video-Support
 
-PolybiusProxy (me) - Creator of hxCodec.
+PolybiusProxy - Creator of hxCodec.
 
 datee - Creator of HaxeVLC.
 
