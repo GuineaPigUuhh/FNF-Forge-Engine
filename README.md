@@ -1,4 +1,4 @@
-# Istall Dependencies
+# Install Dependencies
 haxelib install lime 7.9.0
 
 haxelib install openfl
