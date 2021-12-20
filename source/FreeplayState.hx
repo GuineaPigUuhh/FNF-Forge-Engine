@@ -38,7 +38,7 @@ class FreeplayState extends MusicBeatState
 	private var curPlaying:Bool = false;
 
 	private var iconArray:Array<HealthIcon> = [];
-	var backdrops:FlxBackdrop = new FlxBackdrop(Paths.image('backdrop'), 0.2, 0.2, true, true);
+	var backdrops:FlxBackdrop = new FlxBackdrop(Paths.image('menu/freeplay/backdrop'), 0.2, 0.2, true, true);
 
 	override function create()
 	{
@@ -73,7 +73,7 @@ class FreeplayState extends MusicBeatState
 
 		// LOAD CHARACTERS
 
-		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuBGBlue'));
+		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menu/menuBGBlue'));
 		add(bg);
 
 		add(backdrops);
