@@ -675,43 +675,6 @@ class PlayState extends MusicBeatState
 					bg.scale.set(6, 6);
 					add(bg);
 
-					/* 
-							var bg:FlxSprite = new FlxSprite(posX, posY).loadGraphic(Paths.image('weeb/evilSchoolBG'));
-							bg.scale.set(6, 6);
-							// bg.setGraphicSize(Std.int(bg.width * 6));
-							// bg.updateHitbox();
-							add(bg);
-							var fg:FlxSprite = new FlxSprite(posX, posY).loadGraphic(Paths.image('weeb/evilSchoolFG'));
-							fg.scale.set(6, 6);
-							// fg.setGraphicSize(Std.int(fg.width * 6));
-							// fg.updateHitbox();
-							add(fg);
-							wiggleShit.effectType = WiggleEffectType.DREAMY;
-							wiggleShit.waveAmplitude = 0.01;
-							wiggleShit.waveFrequency = 60;
-							wiggleShit.waveSpeed = 0.8;
-						*/
-
-					// bg.shader = wiggleShit.shader;
-					// fg.shader = wiggleShit.shader;
-
-					/* 
-								var waveSprite = new FlxEffectSprite(bg, [waveEffectBG]);
-								var waveSpriteFG = new FlxEffectSprite(fg, [waveEffectFG]);
-								// Using scale since setGraphicSize() doesnt work???
-								waveSprite.scale.set(6, 6);
-								waveSpriteFG.scale.set(6, 6);
-								waveSprite.setPosition(posX, posY);
-								waveSpriteFG.setPosition(posX, posY);
-								waveSprite.scrollFactor.set(0.7, 0.8);
-								waveSpriteFG.scrollFactor.set(0.9, 0.8);
-								// waveSprite.setGraphicSize(Std.int(waveSprite.width * 6));
-								// waveSprite.updateHitbox();
-								// waveSpriteFG.setGraphicSize(Std.int(fg.width * 6));
-								// waveSpriteFG.updateHitbox();
-								add(waveSprite);
-								add(waveSpriteFG);
-						*/
 			}
 			case 'stage':
 				{
@@ -2039,6 +2002,7 @@ class PlayState extends MusicBeatState
 		if (dad.curCharacter == "spirit"){
 			dad.y += Math.sin(floatshit);
 		}
+		
 		iconP1.setGraphicSize(Std.int(FlxMath.lerp(150, iconP1.width, 0.50)));
 		iconP2.setGraphicSize(Std.int(FlxMath.lerp(150, iconP2.width, 0.50)));
 
@@ -2521,6 +2485,35 @@ class PlayState extends MusicBeatState
 							if (SONG.notes[Math.floor(curStep / 16)].altAnim)
 								altAnim = '-alt';
 						}
+
+						{
+							if(!daNote.isSustainNote)
+								{
+									var angles:Array<Int> = [25, 60, 180, 260, 0];
+									var splash:FlxSprite = new FlxSprite(daNote.x, cpuStrums.members[daNote.noteData].y);
+									splash.x -= 135;
+									splash.y -= 150;
+									splash.angle = angles[FlxG.random.int(1, 5)];
+									splash.setGraphicSize(Std.int(splash.width / 1.2));
+									splash.frames = Paths.getSparrowAtlas('notes/notesplash/notesplash');
+									splash.antialiasing = true;
+									splash.animation.addByPrefix('splash 0', 'purple splash', 24, false);
+									splash.animation.addByPrefix('splash 1', 'blue splash', 24, false);
+									splash.animation.addByPrefix('splash 2', 'green splash', 24, false);
+									splash.animation.addByPrefix('splash 3', 'red splash', 24, false);
+									splash.scrollFactor.set();
+									splash.cameras = [camHUD];
+									add(splash);
+									splash.animation.play('splash ' + daNote.noteData);
+									FlxTween.tween(splash, {alpha: 0}, 0.3, {
+										ease: FlxEase.elasticInOut,
+											onComplete: function(twn:FlxTween)
+											{
+											remove(splash);
+										}
+									});
+								}
+							}
 	
 						switch (Math.abs(daNote.noteData))
 						{
@@ -2853,6 +2846,32 @@ class PlayState extends MusicBeatState
 
 			var daRating = daNote.rating;
 
+			if (daRating == 'sick'){
+				var angles:Array<Int> = [25, 60, 180, 260, 0];
+					var splash:FlxSprite = new FlxSprite(daNote.x, playerStrums.members[daNote.noteData].y);
+					splash.x -= 135;
+					splash.y -= 150;
+					splash.angle = angles[FlxG.random.int(1, 5)];
+					splash.setGraphicSize(Std.int(splash.width / 1.2));
+					splash.frames = Paths.getSparrowAtlas('notes/notesplash/notesplash');
+					splash.antialiasing = true;
+					splash.animation.addByPrefix('splash 0', 'purple splash', 24, false);
+					splash.animation.addByPrefix('splash 1', 'blue splash', 24, false);
+					splash.animation.addByPrefix('splash 2', 'green splash', 24, false);
+					splash.animation.addByPrefix('splash 3', 'red splash', 24, false);
+					splash.scrollFactor.set();
+					splash.cameras = [camHUD];
+					add(splash);
+					splash.animation.play('splash ' + daNote.noteData);
+					FlxTween.tween(splash, {alpha: 0}, 0.3, {
+						ease: FlxEase.elasticInOut,
+							onComplete: function(twn:FlxTween)
+							{
+							remove(splash);
+						}
+					});
+				}
+
 			switch(daRating)
 			{
 				case 'shit':
@@ -2887,30 +2906,6 @@ class PlayState extends MusicBeatState
 					if (FlxG.save.data.accuracyMod == 0)
 						totalNotesHit += 1;
 					sicks++;
-			}
-			
-			var sploosh:FlxSprite = new FlxSprite(daNote.x, playerStrums.members[daNote.noteData].y);
-			{
-				var tex:flixel.graphics.frames.FlxAtlasFrames = Paths.getSparrowAtlas('notes/noteSplashes', 'shared');
-				sploosh.frames = tex;
-				sploosh.animation.addByPrefix('splash 0 0', 'note impact 1 purple', 24, false);
-				sploosh.animation.addByPrefix('splash 0 1', 'note impact 1  blue', 24, false);
-				sploosh.animation.addByPrefix('splash 0 2', 'note impact 1 green', 24, false);
-				sploosh.animation.addByPrefix('splash 0 3', 'note impact 1 red', 24, false);
-				sploosh.animation.addByPrefix('splash 1 0', 'note impact 2 purple', 24, false);
-				sploosh.animation.addByPrefix('splash 1 1', 'note impact 2 blue', 24, false);
-				sploosh.animation.addByPrefix('splash 1 2', 'note impact 2 green', 24, false);
-				sploosh.animation.addByPrefix('splash 1 3', 'note impact 2 red', 24, false);
-				if (daRating == 'sick')
-				{
-					add(sploosh);
-					sploosh.cameras = [camHUD];
-					sploosh.animation.play('splash ' + FlxG.random.int(0, 1) + " " + daNote.noteData);
-					sploosh.alpha = 0.6;
-					sploosh.offset.x += 90;
-					sploosh.offset.y += 80;
-					sploosh.animation.finishCallback = function(name) sploosh.kill();
-				}
 			}
 
 			if(!PlayStateChangeables.botPlay) {
@@ -2980,11 +2975,11 @@ class PlayState extends MusicBeatState
 			switch(daRating)
 			{
 				case 'shit' | 'bad':
-					currentTimingShown.color = FlxColor.RED;
+					currentTimingShown.color = FlxColor.GRAY;
 				case 'good':
-					currentTimingShown.color = FlxColor.GREEN;
+					currentTimingShown.color = FlxColor.WHITE;
 				case 'sick':
-					currentTimingShown.color = FlxColor.CYAN;
+					currentTimingShown.color = FlxColor.WHITE;
 			}
 			currentTimingShown.borderStyle = OUTLINE;
 			currentTimingShown.borderSize = 1;
