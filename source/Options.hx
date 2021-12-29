@@ -140,6 +140,69 @@ class DownscrollOption extends Option
 	}
 }
 
+class MidscrollOption extends Option
+{
+	public function new(desc:String)
+	{
+		super();
+		description = desc;
+	}
+
+	public override function press():Bool
+	{
+		FlxG.save.data.midscroll = !FlxG.save.data.midscroll;
+		display = updateDisplay();
+		return true;
+	}
+
+	private override function updateDisplay():String
+	{
+	    return "Middlescroll " + (!FlxG.save.data.midscroll ? "off" : "on");
+	}
+}
+
+class HideOpponentNotesOption extends Option
+{
+	public function new(desc:String)
+	{
+		super();
+		description = desc;
+	}
+
+	public override function press():Bool
+	{
+		FlxG.save.data.hidenotesdad = !FlxG.save.data.hidenotesdad;
+		display = updateDisplay();
+		return true;
+	}
+
+	private override function updateDisplay():String
+	{
+	    return "Hide Opponent Notes " + (!FlxG.save.data.hidenotesdad ? "off" : "on");
+	}
+}
+
+class HitSoundsOption extends Option
+{
+	public function new(desc:String)
+	{
+		super();
+		description = desc;
+	}
+
+	public override function press():Bool
+	{
+		FlxG.save.data.hitsounds = !FlxG.save.data.hitsounds;
+		display = updateDisplay();
+		return true;
+	}
+
+	private override function updateDisplay():String
+	{
+		return 'Hit Sounds ' + (FlxG.save.data.hitsounds ? "on" : "off");
+	}
+}
+
 class GhostTapOption extends Option
 {
 	public function new(desc:String)
@@ -585,6 +648,46 @@ class AccuracyDOption extends Option
 	private override function updateDisplay():String
 	{
 		return "Accuracy Mode: " + (FlxG.save.data.accuracyMod == 0 ? "Accurate" : "Complex");
+	}
+}
+
+class SplashesPlayer extends Option
+{
+	public function new(desc:String)
+	{
+		super();
+		description = desc;
+	}
+	public override function press():Bool
+	{
+		FlxG.save.data.noteSplashplayer = !FlxG.save.data.noteSplashplayer;
+		display = updateDisplay();
+		return true;
+	}
+
+	private override function updateDisplay():String
+	{
+		return "Splashes Player " + (!FlxG.save.data.noteSplashplayer ? "off" : "on");
+	}
+}
+
+class SplashesOpponent extends Option
+{
+	public function new(desc:String)
+	{
+		super();
+		description = desc;
+	}
+	public override function press():Bool
+	{
+		FlxG.save.data.noteSplashopponent = !FlxG.save.data.noteSplashopponent;
+		display = updateDisplay();
+		return true;
+	}
+
+	private override function updateDisplay():String
+	{
+		return "Splashes Opponent " + (!FlxG.save.data.noteSplashopponent ? "off" : "on");
 	}
 }
 

@@ -4,12 +4,19 @@ import flixel.input.gamepad.FlxGamepad;
 import flash.text.TextField;
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.FlxObject;
+import flixel.system.FlxSound;
+import flixel.tweens.FlxEase;
+import flixel.tweens.FlxTween;
 import flixel.addons.display.FlxGridOverlay;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
+import flixel.util.FlxTimer;
 import lime.utils.Assets;
+import Conductor.BPMChangeEvent;
+import Song.SwagSong;
 import flixel.addons.display.FlxBackdrop;
 
 
@@ -26,8 +33,21 @@ class FreeplayState extends MusicBeatState
 	var selector:FlxText;
 	var curSelected:Int = 0;
 	var curDifficulty:Int = 1;
+	var ohYeah = 0;
+
+	private static var vocals:FlxSound = null;
+	var SongOptimizationOn:Bool = false;
+	var SongOptimization:Array<String> = [ 
+		"Tutorial", "Bopeebo", "Fresh", "DadBattle",
+		"Spookeez", "South", "Monster",
+		"Pico", "Philly", "Blammed",
+		"Satin-Panties", "High", "Milf",
+		"Cocoa", "Eggnog", "Winter-Horrorland",
+		"Senpai", "Roses", "Thorns",								  
+	];
 
 	var scoreText:FlxText;
+	var bg:FlxSprite;
 	var comboText:FlxText;
 	var diffText:FlxText;
 	var lerpScore:Int = 0;
@@ -36,12 +56,27 @@ class FreeplayState extends MusicBeatState
 
 	private var grpSongs:FlxTypedGroup<Alphabet>;
 	private var curPlaying:Bool = false;
+	
+	public var bgColors:Array<String> = [
+		'#FFa5004d', //gf
+		'#FFaf66ce', //dad
+		'#FFd57e00', //spooky
+		'#FFf3ff6e', //monster
+		'#FFb7d855', //pico
+		'#FFd8558e', //mom-car
+		'#FFffaa6f', //senpai
+		'#FFff3c6e', //spirit
+		'#ffffff' //default
+	];
 
 	private var iconArray:Array<HealthIcon> = [];
 	var backdrops:FlxBackdrop = new FlxBackdrop(Paths.image('menu/freeplay/backdrop'), 0.2, 0.2, true, true);
 
 	override function create()
 	{
+		if(!SongOptimizationOn){  #if sys sys.thread.Thread.create(() -> { #end
+			loadingMusic(); #if sys }); #end }
+
 		var initSonglist = CoolUtil.coolTextFile(Paths.txt('freeplaySonglist'));
 
 		for (i in 0...initSonglist.length)
@@ -73,7 +108,7 @@ class FreeplayState extends MusicBeatState
 
 		// LOAD CHARACTERS
 
-		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menu/menuBGBlue'));
+		bg = new FlxSprite().loadGraphic(Paths.image('menu/menuDesat'));
 		add(bg);
 
 		add(backdrops);
@@ -298,10 +333,37 @@ class FreeplayState extends MusicBeatState
 		if (curSelected >= songs.length)
 			curSelected = 0;
 
-		// selector.y = (70 * curSelected) + 30;
-		
-		// adjusting the highscore song name to be compatible (changeSelection)
-		// would read original scores if we didn't change packages
+		#if !switch
+		intendedScore = Highscore.getScore(songs[curSelected].songName, curDifficulty);
+		#end
+
+		switch(songs[curSelected].songName.toLowerCase()) 
+		{
+			case 'tutorial': 
+				FlxTween.color(bg, 0.1, bg.color, FlxColor.fromString(bgColors[0]));
+			case 'bopeebo' | 'fresh' | 'dadbattle' | 'cocoa' | 'eggnog':
+				FlxTween.color(bg, 0.1, bg.color, FlxColor.fromString(bgColors[1]));
+			case 'spookeez' | 'south': 
+				FlxTween.color(bg, 0.1, bg.color, FlxColor.fromString(bgColors[2]));
+			case 'monster' | 'winter-horrorland': 
+				FlxTween.color(bg, 0.1, bg.color, FlxColor.fromString(bgColors[3]));
+			case 'pico' | 'philly' | 'blammed': 
+				FlxTween.color(bg, 0.1, bg.color, FlxColor.fromString(bgColors[4]));
+			case 'satin-panties' | 'high' | 'milf': 
+				FlxTween.color(bg, 0.1, bg.color, FlxColor.fromString(bgColors[5]));
+			case 'senpai' | 'roses': 
+				FlxTween.color(bg, 0.1, bg.color, FlxColor.fromString(bgColors[6]));
+			case 'thorns': 
+				FlxTween.color(bg, 0.1, bg.color, FlxColor.fromString(bgColors[7]));
+			default: 
+				FlxTween.color(bg, 0.1, bg.color, FlxColor.fromString(bgColors[8]));
+		}
+
+		var poop:String = Highscore.formatSong(songs[curSelected].songName.toLowerCase(), curDifficulty);
+		PlayState.SONG = Song.loadFromJson(poop, songs[curSelected].songName.toLowerCase());
+		FlxG.sound.playMusic(Paths.inst(songs[curSelected].songName), 0);
+		Conductor.changeBPM(PlayState.SONG.bpm);
+
 		var songHighscore = StringTools.replace(songs[curSelected].songName, " ", "-");
 		switch (songHighscore) {
 			case 'Dad-Battle': songHighscore = 'Dadbattle';
@@ -342,6 +404,12 @@ class FreeplayState extends MusicBeatState
 			}
 		}
 	}
+
+    function loadingMusic(){
+	for(x in SongOptimization){ FlxG.sound.cache(Paths.inst(x));
+		ohYeah++;
+	}
+    }
 }
 
 class SongMetadata

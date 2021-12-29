@@ -6,8 +6,14 @@ class ForgeEngineData
 {
     public static function initSave()
     {
-        if (FlxG.save.data.newInput == null)
-			FlxG.save.data.newInput = true;
+		if (FlxG.save.data.hitsounds == null)
+			FlxG.save.data.hitsounds = false;
+
+		if (FlxG.save.data.hidenotesdad == null)
+			FlxG.save.data.hidenotesdad = false;
+
+		if (FlxG.save.data.midscroll == null)
+			FlxG.save.data.midscroll = false;
 
 		if (FlxG.save.data.downscroll == null)
 			FlxG.save.data.downscroll = false;
@@ -55,6 +61,12 @@ class ForgeEngineData
 		if (FlxG.save.data.accuracyMod == null)
 			FlxG.save.data.accuracyMod = 1;
 
+		if (FlxG.save.data.noteSplashopponent == null)
+			FlxG.save.data.noteSplashopponent = true;
+		
+		if (FlxG.save.data.noteSplashplayer == null)
+			FlxG.save.data.noteSplashplayer = true;
+
 		if (FlxG.save.data.watermark == null)
 			FlxG.save.data.watermark = true;
 
@@ -74,7 +86,7 @@ class ForgeEngineData
 			FlxG.save.data.botplay = false;
 
 		if (FlxG.save.data.cpuStrums == null)
-			FlxG.save.data.cpuStrums = false;
+			FlxG.save.data.cpuStrums = true;
 
 		if (FlxG.save.data.strumline == null)
 			FlxG.save.data.strumline = false;
@@ -86,7 +98,7 @@ class ForgeEngineData
 			FlxG.save.data.camzoom = true;
 
 		if (FlxG.save.data.scoreScreen == null)
-			FlxG.save.data.scoreScreen = true;
+			FlxG.save.data.scoreScreen = false;
 
 		if (FlxG.save.data.inputShow == null)
 			FlxG.save.data.inputShow = false;

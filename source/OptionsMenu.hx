@@ -1,5 +1,6 @@
 package;
 
+import flixel.input.gamepad.FlxGamepad;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import openfl.Lib;
@@ -19,7 +20,6 @@ import lime.utils.Assets;
 class OptionsMenu extends MusicBeatState
 {
 	public static var instance:OptionsMenu;
-
 	var selector:FlxText;
 	var curSelected:Int = 0;
 
@@ -27,8 +27,11 @@ class OptionsMenu extends MusicBeatState
 		new OptionCategory("Gameplay", [
 			new DFJKOption(controls),
 			new DownscrollOption("Change the layout of the strumline."),
+			new MidscrollOption("Change the layout of the strumline."),
+			new HideOpponentNotesOption("Hide opponent notes."),
 			new GhostTapOption("Ghost Tapping is when you tap a direction and it doesn't give you a miss."),
 			new Judgement("Customize your Hit Timings (LEFT or RIGHT)"),
+			new HitSoundsOption("When Hitting A Note Will Make A Noise Like OSU "),
 			#if desktop
 			new FPSCapOption("Cap your FPS"),
 			#end
@@ -39,22 +42,29 @@ class OptionsMenu extends MusicBeatState
 			new CustomizeGameplay("Drag'n'Drop Gameplay Modules around to your preference")
 		]),
 		new OptionCategory("Appearance", [
-			new FPSOption("Toggle the FPS Counter"),
+			new DistractionsAndEffectsOption("Toggle stage distractions that can hinder your gameplay."),
+			new CamZoomOption("Toggle the camera zoom in-game."),
+			#if desktop
+			new RainbowFPSOption("Make the FPS Counter Rainbow"),
 			new AccuracyOption("Display accuracy information."),
+			new NPSDisplayOption("Shows your current Notes Per Second."),
 			new SongPositionOption("Show the songs current position (as a bar)"),
 			new CpuStrums("CPU's strumline lights up when a note hits it."),
+			new SplashesPlayer("Hide NoteSplash From Player."),
+			new SplashesOpponent("Hide NoteSplash From Opponent."),
+			#end
 		]),
-		new OptionCategory("Help-Full", [
-			new NPSDisplayOption("Shows your current Notes Per Second."),
-			new CamZoomOption("Toggle the camera zoom in-game."),
-			new ReplayOption("View replays"),
-			new DistractionsAndEffectsOption("Toggle stage distractions that can hinder your gameplay."),
-			new FlashingLightsOption("Toggle flashing lights that can cause epileptic seizures and strain."),
-			new RainbowFPSOption("Make the FPS Counter Rainbow"),			
-		]),
+		
 		new OptionCategory("Misc", [
-			new RainbowFPSOption("Make the FPS Counter Rainbow"),	
+			#if desktop
+			new FPSOption("Toggle the FPS Counter"),
+			new ReplayOption("View replays"),
+			#end
+			new FlashingLightsOption("Toggle flashing lights that can cause epileptic seizures and strain."),
 			new WatermarkOption("Enable and disable all watermarks from the engine."),
+			new ScoreScreen("Show the score screen after the end of a song"),
+			new ShowInput("Display every single input in the score screen."),
+			new Optimization("No backgrounds, no characters, centered notes, no player 2."),
 			new BotPlay("Showcase your charts and mods with autoplay."),
 		])
 		
@@ -71,9 +81,14 @@ class OptionsMenu extends MusicBeatState
 	override function create()
 	{
 		instance = this;
-		var menuBG:FlxSprite = new FlxSprite().loadGraphic(Paths.image("menu/menuDesat"));
 
-		menuBG.color = 0xFFea71fd;
+		if (!FlxG.sound.music.playing)
+			{
+				FlxG.sound.playMusic(Paths.music('freakyMenu'));
+			}
+
+		var menuBG:FlxSprite = new FlxSprite().loadGraphic(Paths.image("menu/menuDesat"));
+		menuBG.color = 0xFF5C6CA5;
 		menuBG.setGraphicSize(Std.int(menuBG.width * 1.1));
 		menuBG.updateHitbox();
 		menuBG.screenCenter();
@@ -139,9 +154,26 @@ class OptionsMenu extends MusicBeatState
 				
 				changeSelection(curSelected);
 			}
-			if (controls.UP_P)
+
+			var gamepad:FlxGamepad = FlxG.gamepads.lastActive;
+
+			if (gamepad != null)
+			{
+				if (gamepad.justPressed.DPAD_UP)
+				{
+					FlxG.sound.play(Paths.sound('scrollMenu'));
+					changeSelection(-1);
+				}
+				if (gamepad.justPressed.DPAD_DOWN)
+				{
+					FlxG.sound.play(Paths.sound('scrollMenu'));
+					changeSelection(1);
+				}
+			}
+			
+			if (FlxG.keys.justPressed.UP)
 				changeSelection(-1);
-			if (controls.DOWN_P)
+			if (FlxG.keys.justPressed.DOWN)
 				changeSelection(1);
 			
 			if (isCat)
@@ -210,10 +242,8 @@ class OptionsMenu extends MusicBeatState
 				if (isCat)
 				{
 					if (currentSelectedCat.getOptions()[curSelected].press()) {
-						grpControls.remove(grpControls.members[curSelected]);
-						var ctrl:Alphabet = new Alphabet(0, (70 * curSelected) + 30, currentSelectedCat.getOptions()[curSelected].getDisplay(), true, false);
-						ctrl.isMenuItem = true;
-						grpControls.add(ctrl);
+						grpControls.members[curSelected].reType(currentSelectedCat.getOptions()[curSelected].getDisplay());
+						trace(currentSelectedCat.getOptions()[curSelected].getDisplay());
 					}
 				}
 				else
@@ -232,7 +262,7 @@ class OptionsMenu extends MusicBeatState
 					curSelected = 0;
 				}
 				
-				changeSelection(curSelected);
+				changeSelection();
 			}
 		}
 		FlxG.save.flush();

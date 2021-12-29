@@ -29,7 +29,7 @@ class MainMenuState extends MusicBeatState
 	var menuItems:FlxTypedGroup<FlxSprite>;
 
 	#if !switch
-	var optionShit:Array<String> = ['story mode', 'freeplay', 'donate', 'options'];
+	var optionShit:Array<String> = ['story mode', 'freeplay', 'options'];
 	#else
 	var optionShit:Array<String> = ['story mode', 'freeplay'];
 	#end
@@ -38,6 +38,8 @@ class MainMenuState extends MusicBeatState
 	var newGaming2:FlxText;
 	public static var firstStart:Bool = true;
 
+	public static var plusupdate:String = "Plus";
+
 	public static var nightly:String = "";
 
 	public static var kadeEngineVer:String = "1.5.4" + nightly;
@@ -45,6 +47,12 @@ class MainMenuState extends MusicBeatState
 
 	var magenta:FlxSprite;
 	var camFollow:FlxObject;
+
+	var tipText:FlxText;
+	var tipBackground:FlxSprite;
+	var tipTextMargin:Float = 10;
+	var tipTextScrolling:Bool = false;
+
 	public static var finishedFunnyMove:Bool = false;
 
 	override function create()
@@ -114,9 +122,19 @@ class MainMenuState extends MusicBeatState
 
 		firstStart = false;
 
-		FlxG.camera.follow(camFollow, null, 0.60 * (60 / FlxG.save.data.fpsCap));
+		tipBackground = new FlxSprite();
+		tipBackground.scrollFactor.set();
+		tipBackground.alpha = 0.7;
+		add(tipBackground);
 
-		// NG.core.calls.event.logEvent('swag').send();
+		tipText = new FlxText(0, 0, 0,
+			"Welcome to Forge Engine, it is an engine based on Kade Engine. Remember, I made this engine for fun, hope you like it :> ( I Translated the Original Text I Made Into Another Language, Sorry for the Bad Translation )");
+		tipText.scrollFactor.set();
+		tipText.setFormat("VCR OSD Mono", 24, FlxColor.WHITE, LEFT);
+		tipText.updateHitbox();
+		add(tipText);
+
+		tipBackground.makeGraphic(FlxG.width, Std.int((tipTextMargin * 2) + tipText.height), FlxColor.BLACK);
 
 
 		if (FlxG.save.data.dfjk)
@@ -125,6 +143,7 @@ class MainMenuState extends MusicBeatState
 			controls.setKeyboardScheme(KeyboardScheme.Duo(true), true);
 
 		changeItem();
+		tipTextStartScrolling();
 
 		super.create();
 	}
@@ -133,6 +152,16 @@ class MainMenuState extends MusicBeatState
 
 	override function update(elapsed:Float)
 	{
+		if (tipTextScrolling)
+			{
+				tipText.x -= elapsed * 130;
+				if (tipText.x < -tipText.width)
+				{
+					tipTextScrolling = false;
+					tipTextStartScrolling();
+			}
+		}
+
 		if (FlxG.sound.music.volume < 0.8)
 		{
 			FlxG.sound.music.volume += 0.5 * FlxG.elapsed;
@@ -175,9 +204,9 @@ class MainMenuState extends MusicBeatState
 
 			if (controls.ACCEPT)
 			{
-				if (optionShit[curSelected] == 'donate')
+				if (optionShit[curSelected] == 'fnf')
 				{
-					fancyOpenURL("https://ninja-muffin24.itch.io/funkin");
+					fancyOpenURL("https://www.newgrounds.com/portal/view/770371");
 				}
 				else
 				{
@@ -226,6 +255,21 @@ class MainMenuState extends MusicBeatState
 		menuItems.forEach(function(spr:FlxSprite)
 		{
 			spr.screenCenter(X);
+		});
+	}
+
+	function tipTextStartScrolling()
+	{
+		tipText.x = tipTextMargin;
+		tipText.y = -tipText.height;
+	
+		new FlxTimer().start(1.0, function(timer:FlxTimer)
+		{
+			FlxTween.tween(tipText, {y: tipTextMargin}, 0.3);
+			new FlxTimer().start(2.25, function(timer:FlxTimer)
+			{
+				tipTextScrolling = true;
+			});
 		});
 	}
 	

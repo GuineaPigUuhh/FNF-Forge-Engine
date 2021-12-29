@@ -180,7 +180,7 @@ class PlayState extends MusicBeatState
 	var trainSound:FlxSound;
 
 	var limo:FlxSprite;
-	var grpLimoDancers:FlxTypedGroup<BackgroundDancer>;
+	var grpLimoDancers:FlxTypedGroup<background.BackgroundDancer>;
 	var fastCar:FlxSprite;
 	var songName:FlxText;
 	var upperBoppers:FlxSprite;
@@ -189,7 +189,7 @@ class PlayState extends MusicBeatState
 
 	var fc:Bool = true;
 
-	var bgGirls:BackgroundGirls;
+	var bgGirls:background.BackgroundGirls;
 	var wiggleShit:WiggleEffect = new WiggleEffect();
 
 	var talking:Bool = true;
@@ -470,12 +470,12 @@ class PlayState extends MusicBeatState
 					bgLimo.scrollFactor.set(0.4, 0.4);
 					add(bgLimo);
 					if(FlxG.save.data.distractions){
-						grpLimoDancers = new FlxTypedGroup<BackgroundDancer>();
+						grpLimoDancers = new FlxTypedGroup<background.BackgroundDancer>();
 						add(grpLimoDancers);
 	
 						for (i in 0...5)
 						{
-								var dancer:BackgroundDancer = new BackgroundDancer((370 * i) + 130, bgLimo.y - 400);
+								var dancer:background.BackgroundDancer = new background.BackgroundDancer((370 * i) + 130, bgLimo.y - 400);
 								dancer.scrollFactor.set(0.4, 0.4);
 								grpLimoDancers.add(dancer);
 						}
@@ -641,7 +641,7 @@ class PlayState extends MusicBeatState
 					bgTrees.updateHitbox();
 					treeLeaves.updateHitbox();
 
-					bgGirls = new BackgroundGirls(-100, 190);
+					bgGirls = new background.BackgroundGirls(-100, 190);
 					bgGirls.scrollFactor.set(0.9, 0.9);
 
 					if (songLowercase == 'roses')
@@ -922,7 +922,7 @@ class PlayState extends MusicBeatState
 
 		if (FlxG.save.data.songPosition) // I dont wanna talk about this code :(
 			{
-				songPosBG = new FlxSprite(0, 10).loadGraphic(Paths.image('healthBar'));
+				songPosBG = new FlxSprite(0, 10).loadGraphic(Paths.image('UI/healthBar'));
 				if (PlayStateChangeables.useDownscroll)
 					songPosBG.y = FlxG.height * 0.9 + 45; 
 				songPosBG.screenCenter(X);
@@ -932,7 +932,7 @@ class PlayState extends MusicBeatState
 				songPosBar = new FlxBar(songPosBG.x + 4, songPosBG.y + 4, LEFT_TO_RIGHT, Std.int(songPosBG.width - 8), Std.int(songPosBG.height - 8), this,
 					'songPositionBar', 0, 90000);
 				songPosBar.scrollFactor.set();
-				songPosBar.createFilledBar(FlxColor.GRAY, FlxColor.LIME);
+				songPosBar.createFilledBar(FlxColor.BLACK, FlxColor.fromRGB(0, 255, 128));
 				add(songPosBar);
 	
 				var songName = new FlxText(songPosBG.x + (songPosBG.width / 2) - (SONG.song.length * 5),songPosBG.y,0,SONG.song, 16);
@@ -959,8 +959,7 @@ class PlayState extends MusicBeatState
 			// healthBar
 			add(healthBar);
 
-		// Add Kade Engine watermark
-		engine = new FlxText(4,healthBarBG.y + 50,0,SONG.song + " - " + CoolUtil.difficultyFromInt(storyDifficulty), 16);
+		engine = new FlxText(4,healthBarBG.y + 50,0,SONG.song + " - " + CoolUtil.difficultyFromInt(storyDifficulty) + (Main.watermarks ? " | Forge Engine " + MainMenuState.plusupdate : ""), 16);
 		engine.setFormat(Paths.font("vcr.ttf"), 16, FlxColor.WHITE, RIGHT, FlxTextBorderStyle.OUTLINE,FlxColor.BLACK);
 		engine.scrollFactor.set();
 		add(engine);
@@ -1414,7 +1413,7 @@ class PlayState extends MusicBeatState
 			remove(songPosBar);
 			remove(songName);
 
-			songPosBG = new FlxSprite(0, 10).loadGraphic(Paths.image('healthBar'));
+			songPosBG = new FlxSprite(0, 10).loadGraphic(Paths.image('UI/healthBar'));
 			if (PlayStateChangeables.useDownscroll)
 				songPosBG.y = FlxG.height * 0.9 + 45; 
 			songPosBG.screenCenter(X);
@@ -1425,7 +1424,7 @@ class PlayState extends MusicBeatState
 				'songPositionBar', 0, songLength - 1000);
 			songPosBar.numDivisions = 1000;
 			songPosBar.scrollFactor.set();
-			songPosBar.createFilledBar(FlxColor.GRAY, FlxColor.LIME);
+			songPosBar.createFilledBar(FlxColor.BLACK, FlxColor.fromRGB(0, 255, 128));
 			add(songPosBar);
 
 			var songName = new FlxText(songPosBG.x + (songPosBG.width / 2) - (SONG.song.length * 5),songPosBG.y,0,SONG.song, 16);
@@ -1715,8 +1714,10 @@ class PlayState extends MusicBeatState
 								babyArrow.animation.addByPrefix('pressed', 'right press', 24, false);
 								babyArrow.animation.addByPrefix('confirm', 'right confirm', 24, false);
 						}
-			}
-
+		    }
+		    if (player == 0){
+		    	    babyArrow.x += 60;
+	     	}
 			babyArrow.updateHitbox();
 			babyArrow.scrollFactor.set();
 
@@ -1740,6 +1741,18 @@ class PlayState extends MusicBeatState
 			babyArrow.animation.play('static');
 			babyArrow.x += 50;
 			babyArrow.x += ((FlxG.width / 2) * player);
+
+			if (FlxG.save.data.midscroll && player == 1){
+				babyArrow.x -= 275;
+			}
+
+			if (FlxG.save.data.midscroll && player == 0){
+				babyArrow.x += 9999;
+			}
+
+			if (FlxG.save.data.hidenotesdad && player == 0){ //hide opponent notes opponent
+				babyArrow.x += 9999;
+			}
 			
 			if (PlayStateChangeables.Optimize)
 				babyArrow.x -= 275;
@@ -2487,6 +2500,8 @@ class PlayState extends MusicBeatState
 						}
 
 						{
+							
+					if (FlxG.save.data.noteSplashopponent)
 							if(!daNote.isSustainNote)
 								{
 									var angles:Array<Int> = [25, 60, 180, 260, 0];
@@ -2846,6 +2861,7 @@ class PlayState extends MusicBeatState
 
 			var daRating = daNote.rating;
 
+	if (FlxG.save.data.noteSplashplayer)
 			if (daRating == 'sick'){
 				var angles:Array<Int> = [25, 60, 180, 260, 0];
 					var splash:FlxSprite = new FlxSprite(daNote.x, playerStrums.members[daNote.noteData].y);
@@ -3647,6 +3663,9 @@ class PlayState extends MusicBeatState
 				if (mashViolations < 0)
 					mashViolations = 0;
 
+				if (FlxG.save.data.hitsounds && !note.isSustainNote){
+					FlxG.sound.play(Paths.sound('OSU'));
+				}
 				if (!note.wasGoodHit)
 				{
 					if (!note.isSustainNote)
@@ -3940,7 +3959,7 @@ class PlayState extends MusicBeatState
 
 			case 'limo':
 				if(FlxG.save.data.distractions){
-					grpLimoDancers.forEach(function(dancer:BackgroundDancer)
+					grpLimoDancers.forEach(function(dancer:background.BackgroundDancer)
 						{
 							dancer.dance();
 						});

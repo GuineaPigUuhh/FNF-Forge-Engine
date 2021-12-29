@@ -23,17 +23,17 @@ class Ratings
 
         var wifeConditions:Array<Bool> = [
             accuracy >= 99.9935, // AAAAA
-            accuracy >= 99.980, // AAAA:
-            accuracy >= 99.970, // AAAA.
+            accuracy >= 99.980, // AAAA++
+            accuracy >= 99.970, // AAAA+
             accuracy >= 99.955, // AAAA
-            accuracy >= 99.90, // AAA:
-            accuracy >= 99.80, // AAA.
+            accuracy >= 99.90, // AAA++
+            accuracy >= 99.80, // AAA+
             accuracy >= 99.70, // AAA
-            accuracy >= 99, // AA:
-            accuracy >= 96.50, // AA.
+            accuracy >= 99, // AA++
+            accuracy >= 96.50, // AA+
             accuracy >= 93, // AA
-            accuracy >= 90, // A:
-            accuracy >= 85, // A.
+            accuracy >= 90, // A++
+            accuracy >= 85, // A+
             accuracy >= 80, // A
             accuracy >= 70, // B
             accuracy >= 60, // C
@@ -145,7 +145,6 @@ class Ratings
          (!PlayStateChangeables.botPlay || PlayState.loadRep ? "Score:" + (Conductor.safeFrames != 10 ? score + " (" + scoreDef + ")" : "" + score) + 		// Score
          (FlxG.save.data.accuracyDisplay ?																						// Accuracy Toggle
          " | Misses:" + PlayState.misses + 																				// 	Misses
-         " | Accuracy:" + (PlayStateChangeables.botPlay && !PlayState.loadRep ? "N/A" : HelperFunctions.truncateFloat(accuracy, 2) + " %") +  				// 	Accuracy
-         " | Rank:" + GenerateLetterRank(accuracy) : "") : ""); 																		// 	Letter Rank
+         " | Accuracy:" + (PlayStateChangeables.botPlay && !PlayState.loadRep ? "N/A" : HelperFunctions.truncateFloat(accuracy, 2) + "% ") + GenerateLetterRank(accuracy) : "") : "");  				// 	Accuracy And Simple Rating Update
     }
 }
